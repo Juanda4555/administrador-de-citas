@@ -56,6 +56,14 @@ public class BTreePag {
         this.father = father;
     }
     
-    
+    public void into(int key){
+        int i=elements-1;
+        while (i>0 && this.key[i]>key) {
+            this.key[i+1]=this.key[i];
+            i--;
+        }
+        this.key[i +1]=key;
+        this.elements++;
+    }
 
 }
