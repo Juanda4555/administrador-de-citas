@@ -1,21 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package administrador.de.citas;
 
-/**
- *
- * @author caldo
- */
+import Clases.BTree;
+
 public class AdministradorDeCitas {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        BTree tree = new BTree();
+        tree.insert(10);
+        tree.insert(20);
+        tree.insert(5);
+        tree.insert(6);
+        tree.insert(12);
+        tree.insert(30);
+        tree.insert(33);
+        tree.insert(35);
+//        tree.insert(7);
+//        tree.insert(17);
+        tree.printTree(tree.getRoot());
     }
-    
+
 }

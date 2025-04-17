@@ -1,8 +1,11 @@
 package Clases;
 
+import java.util.Arrays;
+
 public class BTreePag {
 
     private int elements;
+    private int grade;
     private BTreePag child[];
     private int key[];
     private boolean leaf;
@@ -10,9 +13,10 @@ public class BTreePag {
 
     public BTreePag(BTreePag father) {
         this.father = father;
+        this.grade = 3;
         this.elements = 0;
-        this.child = new BTreePag[5];
-        this.key = new int[5];
+        this.child = new BTreePag[grade];
+        this.key = new int[grade];
         this.leaf = true;
     }
 
@@ -55,15 +59,37 @@ public class BTreePag {
     public void setFather(BTreePag father) {
         this.father = father;
     }
-    
-    public void into(int key){
-        int i=elements-1;
-        while (i>0 && this.key[i]>key) {
-            this.key[i+1]=this.key[i];
-            i--;
-        }
-        this.key[i +1]=key;
-        this.elements++;
+
+    public int getGrade() {
+        return grade;
     }
 
+    public void setGrade(int grade) {
+        this.grade = grade;
+    }
+
+    public void insert(int key) {
+        int i = elements - 1;
+        while (i >= 0 && this.key[i] > key) {
+            this.key[i + 1] = this.key[i];
+            i--;
+        }
+        this.key[i + 1] = key;
+        this.elements++;
+    }
+    
+    public void moveChild(int position){
+        if (child[position]!=null) {
+            int positionChild=elements-1;
+            while (positionChild!=position && positionChild>=0) {
+                child[positionChild+1]=child[positionChild];
+                positionChild--;
+            }
+        }
+    }
+
+    public String to(){
+        return (father==null)?"null":Arrays.toString(key);
+    }
+    
 }
