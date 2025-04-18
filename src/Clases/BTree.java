@@ -71,6 +71,8 @@ public class BTree {
         }
         return nodo;
     }
+    
+    
 
     public void printTree(BTreePag nodo) {
         if (nodo != null) {
