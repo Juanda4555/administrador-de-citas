@@ -40,55 +40,33 @@ public class BTree {
     }
 
     private BTreePag split(BTreePag nodo) {
-//        System.out.println("hijo "+nodo.to());
-//        System.out.println("padre "+((nodo.getFather()==null)?"null":nodo.getFather().to()+""));
         if (nodo.getElements() == nodo.getGrade()) {
             if (nodo.getFather() == null) {
-
                 BTreePag c = nodo;
                 nodo = new BTreePag(null);
-                nodo.insert(c.getKey()[nodo.getGrade() / 2]);
+                nodo.insert(c.getKey()[c.getGrade() / 2]);
                 nodo.getChild()[0] = new BTreePag(nodo);
                 nodo.getChild()[1] = new BTreePag(nodo);
-                for (int i = 0; i < c.getGrade() / 2; i++) {
-                    nodo.getChild()[0].insert(c.getKey()[i]);
-                }
-                for (int i = (c.getGrade() / 2) + 1; i < c.getGrade(); i++) {
-                    nodo.getChild()[1].insert(c.getKey()[i]);
-                }
+                nodo.getChild()[0].copyKeys(c, 0, c.getGrade() / 2);
+                nodo.getChild()[1].copyKeys(c, (c.getGrade() / 2) + 1, c.getGrade());
+                nodo.getChild()[0].copyChild(c, 0, c.getGrade() / 2);
+                nodo.getChild()[1].copyChild(c, (c.getGrade() / 2) + 1, c.getGrade());
                 nodo.setLeaf(false);
-
             } else {
-
-                int keyAux = nodo.getKey()[nodo.getGrade() / 2];
-                nodo.getFather().insert(keyAux);
-                int index;
-
-                for (index = 0; index < nodo.getFather().getElements(); index++) {
-                    if (nodo.getFather().getKey()[index] == keyAux) {
-                        break;
-                    }
-                }
-
-                nodo.getFather().moveChild(index);
-
+                int elem = nodo.getKey()[nodo.getGrade() / 2];
+                nodo.getFather().insert(elem);
+                int index = nodo.getFather().position(nodo.getFather(), elem);
+                BTreePag izq = new BTreePag(nodo.getFather());
+                BTreePag der = new BTreePag(nodo.getFather());
+                izq.copyKeys(nodo, 0, nodo.getGrade() / 2);
+                izq.copyChild(nodo, 0, nodo.getGrade() / 2);
+                der.copyKeys(nodo, (nodo.getGrade() / 2) + 1, nodo.getGrade());
+                der.copyChild(nodo, (nodo.getGrade() / 2) + 1, nodo.getGrade());
                 if (nodo.getFather().getElements() == nodo.getFather().getGrade()) {
                     split(nodo.getFather());
                 }
-
-                nodo.getFather().getChild()[index + 1] = new BTreePag(nodo.getFather());
-
-                for (int i = (nodo.getGrade() / 2) + 1; i < nodo.getGrade(); i++) {
-                    nodo.getFather().getChild()[index + 1].insert(nodo.getKey()[i]);
-                }
-
-                BTreePag aux = nodo;
-                nodo.getFather().getChild()[index] = new BTreePag(nodo.getFather());
-
-                for (int i = 0; i < nodo.getGrade() / 2; i++) {
-                    nodo.getFather().getChild()[index].insert(nodo.getKey()[i]);
-                }
-
+                nodo.getFather().getChild()[index+1] = der;
+                nodo.getFather().getChild()[index] = izq;
             }
         }
         return nodo;

@@ -87,6 +87,27 @@ public class BTreePag {
             }
         }
     }
+    
+    public void copyKeys(BTreePag newArry, int positionStart, int positionFinal){
+        for (int i = positionStart; i < positionFinal; i++) {
+            insert(newArry.getKey()[i]);
+        }
+    }
+    
+    public void copyChild(BTreePag newArry, int positionStart, int positionFinal){
+        for (int i = positionStart; i < positionFinal; i++) {
+            child[i]=newArry.getChild()[i];
+        }
+    }
+    
+    public int position(BTreePag nodo, int elemento){
+        for (int i = 0; i < nodo.getKey().length; i++) {
+            if (nodo.getKey()[i]==elemento) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public String to(){
         return (father==null)?"null":Arrays.toString(key);
