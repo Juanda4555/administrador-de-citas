@@ -1,77 +1,73 @@
 package Clases;
 
 public class BTree {
-
+    
     private BTreePag root;
-
+    
     public BTree() {
-        this.root = new BTreePag(null);
+        this.root = null;
     }
-
+    
     public BTreePag getRoot() {
         return root;
     }
-
+    
     public void setRoot(BTreePag root) {
         this.root = root;
     }
 
     public void insert(int key) {
-        this.root = BTree.this.insert(root, key);
+        if (root == null) {
+            root = new BTreePag(null);
+            root.insert(key);
+        } else {
+            if (root.getElements() == root.getGrade()) {
+                BTreePag newNodo=new BTreePag(null);
+                newNodo.getChild()[0]=root;
+                
+                split(newNodo, 0, root);
+                int i = 0;
+                if (newNodo.getKey()[0] < key) {
+                    i++;
+                }
+                insertLeaf(newNodo.getChild()[i], key);
+                root=newNodo;
+            } else {
+                insertLeaf(root, key);
+            }
+        }
     }
-
-    private BTreePag insert(BTreePag nodo, int key) {
+    
+    private void insertLeaf(BTreePag nodo, int key) {
         if (nodo.isLeaf()) {
             nodo.insert(key);
         } else {
-            boolean found = false;
-            for (int i = 0; i <= nodo.getElements() - 1; i++) {
-                if (key < nodo.getKey()[i]) {
-                    found = true;
-                    BTree.this.insert(nodo.getChild()[i], key);
-                    break;
-                }
+            int i = nodo.getElements() - 1;
+            while (i >= 0 && nodo.getKey()[i] > key) {
+                i--;
             }
-            if (!found) {
-                insert(nodo.getChild()[nodo.getElements()], key);
+            i++;
+            if (nodo.getChild()[i].getElements() == nodo.getGrade()) {
+                
             }
         }
-        return split(nodo);
     }
-
-    private BTreePag split(BTreePag nodo) {
-        if (nodo.getElements() == nodo.getGrade()) {
-            if (nodo.getFather() == null) {
-                BTreePag c = nodo;
-                nodo = new BTreePag(null);
-                nodo.insert(c.getKey()[c.getGrade() / 2]);
-                nodo.getChild()[0] = new BTreePag(nodo);
-                nodo.getChild()[1] = new BTreePag(nodo);
-                nodo.getChild()[0].copyKeys(c, 0, c.getGrade() / 2);
-                nodo.getChild()[1].copyKeys(c, (c.getGrade() / 2) + 1, c.getGrade());
-                nodo.getChild()[0].copyChild(c, 0, c.getGrade() / 2);
-                nodo.getChild()[1].copyChild(c, (c.getGrade() / 2) + 1, c.getGrade());
-                nodo.setLeaf(false);
-            } else {
-                int elem = nodo.getKey()[nodo.getGrade() / 2];
-                nodo.getFather().insert(elem);
-                int index = nodo.getFather().position(nodo.getFather(), elem);
-                BTreePag izq = new BTreePag(nodo.getFather());
-                BTreePag der = new BTreePag(nodo.getFather());
-                izq.copyKeys(nodo, 0, nodo.getGrade() / 2);
-                izq.copyChild(nodo, 0, nodo.getGrade() / 2);
-                der.copyKeys(nodo, (nodo.getGrade() / 2) + 1, nodo.getGrade());
-                der.copyChild(nodo, (nodo.getGrade() / 2) + 1, nodo.getGrade());
-                if (nodo.getFather().getElements() == nodo.getFather().getGrade()) {
-                    split(nodo.getFather());
-                }
-                nodo.getFather().getChild()[index+1] = der;
-                nodo.getFather().getChild()[index] = izq;
+    
+    private void split(BTreePag parent, int i, BTreePag child) {
+        BTreePag newNodo = new BTreePag(parent);
+        for (int j = 0; j < parent.getGrade() / 2; j++) {
+            newNodo.insert(child.getKey()[j + parent.getGrade() / 2]);
+        }
+        if (!child.isLeaf()) {
+            for (int j = 0; j < child.getGrade() / 2; j++) {
+                newNodo.getChild()[j] = child.getChild()[j + child.getGrade() / 2];
             }
         }
-        return nodo;
+        parent.moveChild(i);
+        parent.getChild()[i] = newNodo;
+        parent.insert(child.getKey()[child.getGrade() / 2]);
     }
-
+    
     public void printTree(BTreePag nodo) {
         if (nodo != null) {
             for (int i = 0; i < nodo.getElements(); i++) {
