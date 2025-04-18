@@ -91,6 +91,7 @@ public class BTreePag {
     public void copyKeys(BTreePag newArry, int positionStart, int positionFinal){
         for (int i = positionStart; i < positionFinal; i++) {
             insert(newArry.getKey()[i]);
+            child[i]=newArry.getChild()[i];
         }
     }
     
