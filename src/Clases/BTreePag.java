@@ -5,15 +5,17 @@ import java.util.Arrays;
 public class BTreePag {
 
     private int elements;
+    private int son;
     private int grade;
     private BTreePag child[];
     private int key[];
     private boolean leaf;
     private BTreePag father;
 
-    public BTreePag(BTreePag father) {
-        this.father = father;
+    public BTreePag() {
+        //this.father = father;
         this.grade = 3;
+        this.son=0;
         this.elements = 0;
         this.child = new BTreePag[grade];
         this.key = new int[grade];
@@ -67,6 +69,8 @@ public class BTreePag {
     public void setGrade(int grade) {
         this.grade = grade;
     }
+    
+    
 
     public void insert(int key) {
         int i = elements - 1;
@@ -78,40 +82,43 @@ public class BTreePag {
         this.elements++;
     }
     
-    public void moveChild(int position){
-        if (child[position]!=null) {
-            int positionChild=elements-1;
-            while (positionChild!=position && positionChild>=0) {
-                child[positionChild+1]=child[positionChild];
-                positionChild--;
-            }
-        }
-    }
-    
-    public void copyKeys(BTreePag newArry, int positionStart, int positionFinal){
-        for (int i = positionStart; i < positionFinal; i++) {
-            insert(newArry.getKey()[i]);
-            child[i]=newArry.getChild()[i];
-        }
-    }
-    
-    public void copyChild(BTreePag newArry, int positionStart, int positionFinal){
-        for (int i = positionStart; i < positionFinal; i++) {
-            child[i]=newArry.getChild()[i];
-        }
-    }
-    
-    public int position(BTreePag nodo, int elemento){
-        for (int i = 0; i < nodo.getKey().length; i++) {
-            if (nodo.getKey()[i]==elemento) {
-                return i;
-            }
-        }
-        return -1;
-    }
+   public void insertOrder(int valor, BTreePag chaild){
+       int i=0;
+       while (this.key[i]>valor) {
+           i++;
+       }
+       for (int j = elements-1; j >= i; j--) {
+           key[j+1]=key[j];
+       }
+       for (int j = son-1; j >=i; j--) {
+           child[j+1]=child[j];
+       }
+       key[i]=valor;
+       child[i]=chaild;
+       elements++;
+       if (!leaf) {
+           son++;
+       }
+   }
+   
+   public void delateKey(){
+       for (int i = 0; i < elements-1; i++) {
+           key[i]=key[i+1];
+       }
+       key[elements-1]=0;
+       elements--;
+   }
 
     public String to(){
         return (father==null)?"null":Arrays.toString(key);
+    }
+
+    public int getSon() {
+        return son;
+    }
+
+    public void setSon(int son) {
+        this.son = son;
     }
     
 }
