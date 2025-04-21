@@ -78,6 +78,21 @@ public class BTreePag {
         this.elements++;
     }
     
+    public boolean search(int date){
+        for (int i = 0; i < key.length; i++) {
+            if (key[i]==date) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void dalatChild(BTreePag nodo){
+        for (int i = 0; i < child.length; i++) {
+            child[i]=null;
+        }
+    }
+    
     public void moveChild(int position){
         if (child[position]!=null) {
             int positionChild=elements-1;
@@ -91,6 +106,7 @@ public class BTreePag {
     public void copyKeys(BTreePag newArry, int positionStart, int positionFinal){
         for (int i = positionStart; i < positionFinal; i++) {
             insert(newArry.getKey()[i]);
+            child[i]=newArry.getChild()[i];
         }
     }
     
